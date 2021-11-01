@@ -2,6 +2,7 @@
 //     test.addEventListener("click", () => {
 //         main();
 // });  
+let isLoading = false;
 
 function main(){
     
@@ -30,43 +31,55 @@ function getPages(){
     let currentPage = Number(document.querySelector(".current-page").innerText);
     console.log(currentPage);
    
-    previousPage.addEventListener("click", () => {   
-        if(currentPage > 1){
-            document.querySelector(".loader-characters").classList.remove("removeloader");
-            document.querySelector(".current-page").innerText = --currentPage;
-            const request = fetch("https://swapi.dev/api/people/?page="+ currentPage);
-            let characters = document.querySelector(".characters")
-            characters.innerHTML = "";
-            request.then(response => response.json()).then(data =>{
-                document.querySelector(".loader-characters").classList.add("removeloader")
-            for(let character of data.results){
-                let button = document.createElement("button");
-                button.innerText = character.name;
-                characters.append(button);
-
+    previousPage.addEventListener("click", () => {
+        if(!isLoading){
+            if(currentPage > 1){
+                document.querySelector(".loader-characters").classList.remove("removeloader");
+                document.querySelector(".current-page").innerText = --currentPage;
+                isLoading = true;
+                const request = fetch("https://swapi.dev/api/people/?page="+ currentPage);
+                let characters = document.querySelector(".characters")
+                characters.innerHTML = "";
+                request.then(response => response.json()).then(data =>{
+                    isLoading = false;
+                    document.querySelector(".loader-characters").classList.add("removeloader")
+                for(let character of data.results){
+                    let button = document.createElement("button");
+                    button.innerText = character.name;
+                    characters.append(button);         
+    
+                }
+                displayCharacters(data.results);
+            });
+                
+                
             }
-            displayCharacters(data.results);
-        });
-            
-            
-        }
+        }   
+    
     });
     nextPage.addEventListener("click", () =>{
-        if(currentPage < 9){
-            document.querySelector(".loader-characters").classList.remove("removeloader");
-            document.querySelector(".current-page").innerText = ++currentPage;
-            const request = fetch("https://swapi.dev/api/people/?page="+ currentPage);
-            let characters = document.querySelector(".characters")
-            characters.innerHTML = "";
-            request.then(response => response.json()).then(data =>{
-                document.querySelector(".loader-characters").classList.add("removeloader")
-            for(let character of data.results){
-                let button = document.createElement("button");
-                button.innerText = character.name;
-                characters.append(button);
-            }
-            displayCharacters(data.results);
-        });
+        if(!isLoading){
+            if(currentPage < 9){
+                document.querySelector(".loader-characters").classList.remove("removeloader");
+                document.querySelector(".current-page").innerText = ++currentPage;
+                isLoading = true;
+                const request = fetch("https://swapi.dev/api/people/?page="+ currentPage);
+            
+                let characters = document.querySelector(".characters")
+                characters.innerHTML = "";
+                request.then(response => response.json())
+                
+                .then(data =>{
+                    isLoading = false
+                    document.querySelector(".loader-characters").classList.add("removeloader")
+                for(let character of data.results){
+                    let button = document.createElement("button");
+                    button.innerText = character.name;
+                    characters.append(button);
+                }
+                displayCharacters(data.results);
+            });
+        }
         
             
         }
@@ -74,6 +87,7 @@ function getPages(){
     });
 }
 function displayCharacters(characters){
+
     let buttons = document.querySelectorAll(".characters button");
     let details = document.querySelector(".person-details");
     let planetDetails = document.querySelector(".planet-details");
