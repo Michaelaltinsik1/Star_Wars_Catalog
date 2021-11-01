@@ -6,9 +6,6 @@
     min-height: 100vh;
     max-width: 100vw; */
 
-    .test {
-        padding: 1rem;
-    }
 
 body{
     margin: 0 auto;
@@ -22,7 +19,8 @@ body{
 }
 
 .wrapper {
-    width: 70%;
+    width: 90%;
+    position: relative;
 }
 
 h2 {
@@ -50,24 +48,36 @@ nav button{
     justify-content: space-evenly;
 }
 
-.characters-container {
+.characters-container  {
     min-height: 400px;
-    max-width: 300px;
+    min-width: 350px;
     background-color:#C4C4C4 ;
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     /* justify-content: space-between; */
-    align-items: center;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
+    /* align-items: center; */
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 50px 1fr 100px; 
+    border-top-left-radius: 0.6rem;
+    border-top-right-radius: 0.6rem;
+    position:relative;
+    top:-2rem;
 }
 
 .characters-container header {
+    min-width:100%;
     background-color: #666768;
-    padding: 1rem 6rem;
     border-top-left-radius: 0.5rem;
     border-top-right-radius: 0.5rem;
+  
 
+}
+
+.characters-container header, .details-container header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .characters-container .characters {
@@ -104,6 +114,7 @@ nav button{
     margin: auto 0rem;
     margin-bottom: 0rem;
     display: flex;
+    justify-content: center;
 
 }
 .characters-container nav p {
@@ -116,10 +127,32 @@ nav button{
     margin-top: .2rem;
 }
 
-.details-container header {
-    background-color: #748687;
-    padding: 1rem 6rem;
+.details-container {
+    min-height: 400px;
+    min-width: 350px;
+    background-color:#C4C4C4 ;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 50px 1fr 1fr;
+    border-top-left-radius: 0.6rem;
+    border-top-right-radius: 0.6rem;
+    position: relative;
+    top:-2rem;
 }
+
+.details-container article{
+    min-width:100%;
+}
+
+.details-container header {
+    min-width:100%;
+    background-color: #748687;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    text-align: center;
+}
+
+
 
 .details-container .person-details {
     background-color: #C4C4C4;
@@ -128,24 +161,33 @@ nav button{
 
 .details-container .planet-details {
     background-color: #8E8E8E;
+    display: flex;
+    flex-direction: column;
+    
 }
 
 .loader-characters {
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #3498db; /* Blue */
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
+    width: 60px;
+    height: 60px;
     animation: spin 2s linear infinite;
+    align-self: center;
+    margin-top: 8rem;
+    margin-left: 8rem;
+    
   }
   .loader-planets{
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #3498db; /* Blue */
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
+    width: 60px;
+    height: 60px;
     animation: spin 2s linear infinite;
     display: none;
+    align-self: center;
+    margin-top: 3.5rem;
   }
   
   @keyframes spin {

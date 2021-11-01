@@ -6,7 +6,7 @@
 function main(){
     
         getFirstPage();
-        getPages();   
+        getPages();  
 }
 main()
 
