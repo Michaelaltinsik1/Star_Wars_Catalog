@@ -26,7 +26,7 @@ body{
 h2 {
     color: #FFD600;
 }
-nav button{
+.page-nav button{
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -133,11 +133,14 @@ nav button{
     background-color:#C4C4C4 ;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 50px 1fr 1fr;
+    grid-template-rows: 50px 1fr 0.3fr 1fr;
     border-top-left-radius: 0.6rem;
     border-top-right-radius: 0.6rem;
     position: relative;
     top:-2rem;
+}
+.details-nav{
+    border-top: 1px solid gray;
 }
 
 .details-container article{
@@ -199,6 +202,12 @@ nav button{
       display: none;
   }
   .loadplanets {
+    display: block;
+}
+.hidden{
+    display: none;
+}
+.show{
     display: block;
 }
   
