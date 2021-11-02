@@ -422,8 +422,8 @@ function getSpaceShips(character){
                         <p>Passengers: ${data.passengers}</p>                
                     ` 
                     //planetDetails.innerHTML += nav; 
-                    previous(character);
-                    next(character);                
+                    previous1(character);
+                    next1(character);                
                 })
                 
                 
@@ -440,7 +440,7 @@ function getSpaceShips(character){
 
 }
 
-function previous(character){
+function previous1(character){
     let div = document.querySelector(".vehdetails");
     let currentPage = document.querySelector(".paging .current-page").innerText;
     let nav = getNav(character.starships.length,currentPage);
@@ -474,7 +474,7 @@ function previous(character){
     });
 }
 
-function next(character){
+function next1(character){
     let div = document.querySelector(".vehdetails");
     let currentPage = document.querySelector(".paging .current-page").innerText;
     let nav = getNav(character.starships.length,currentPage);
