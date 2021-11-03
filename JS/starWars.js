@@ -95,6 +95,7 @@ function displayCharacters(characters){
     let speciesInfoButton = document.querySelector(".details-nav button:nth-of-type(2)");
     let vehiclesInfoButton = document.querySelector(".details-nav button:nth-of-type(3)");
     let starshipsInfoButton = document.querySelector(".details-nav button:nth-of-type(4)");
+    // let transportationButtons = document.querySelectorAll("")
     
     for(let button of buttons){
         button.addEventListener("click", () =>{ 
@@ -159,7 +160,8 @@ function displayCharacters(characters){
         
         for(let character of characters){
             if(character.name === name){
-                getVehicles(character);
+                /*getVehicles(character, "vehicles");*/
+                getData(character, "vehicles");
             }
         }
 
@@ -169,7 +171,8 @@ function displayCharacters(characters){
         
         for(let character of characters){
             if(character.name === name){
-                getSpaceShips(character)
+                // getSpaceShips(character,"starships")
+                getData(character, "starships");
             }
         }
 
@@ -227,19 +230,7 @@ function getSpeciesData(character){
     }                
     
 }
-/*function getNav(length){
-    return ` <nav class="paging">
-                <button class="previous-1">
-                    <img src="images/chevron_left_black_24dp.svg" alt="left-arrow">
-                </button>
-                <p class="current-page">1</p>
-                <p>/</p>
-                <p class="total-pages">${length}</p>
-                <button class="next-1">
-                    <img src="images/chevron_right_black_24dp.svg" alt="right-arrow">
-                </button>
-            </nav>      `
-}*/
+
 function getNav(length,currentPage){
     return ` <nav class="paging">
                 <button class="previous-1">
@@ -254,33 +245,22 @@ function getNav(length,currentPage){
             </nav>
         `
 }
-/*function generateVehiclesData(character){
 
-    return planetDetails.innerHTML = `
-                <h3>${data.name}</h3>
-                <p>Model: ${data.model}</p>
-                <p>Manufacturer: ${data.manufacturer}</p>
-                <p>Cost: ${data.cost_in_credits}</p>
-                <p>Length: ${data.length}</p>
-                <p>Crew: ${data.crew}</p>
-                <p>Passengers: ${data.passengers}</p>                
-            ` + nav      
-}*/
-function getVehicles(character){
-    // if(!isLoading){
-        let nav = getNav(character.vehicles.length, "1");
+
+function getData(character, transport){
+    let nav = getNav(character[transport].length, "1");
         let planetDetails = document.querySelector(".planet-details");
         planetDetails.innerHTML = ""
         /*planetDetails.innerHTML = `<div class="loader-planets loadplanets"></div>`;*/
         /*div1.innerHTML = `<div class="loader-planets loadplanets"></div>`*/
         planetDetails.innerHTML += nav; 
         // isLoading = true
-        if(character.vehicles.length > 0){
+        if(character[transport].length > 0){
             /*for(vehicle of character.vehicles){
             
                 
             }*/
-            let request = fetch(character.vehicles[0]);
+            let request = fetch(character[transport][0]);
         
                 let div3 = document.createElement("div");
                 div3.setAttribute("class", "vehdetails");
@@ -288,7 +268,7 @@ function getVehicles(character){
                 div3.innerHTML = `<div class="loader-planets loadplanets"></div>`
                 request.then(response => response.json()).then(data =>{
                     // isLoading = false;
-                    div3.innerHTML = `
+                div3.innerHTML = `
                         <h3>${data.name}</h3>
                         <p>Model: ${data.model}</p>
                         <p>Manufacturer: ${data.manufacturer}</p>
@@ -297,9 +277,8 @@ function getVehicles(character){
                         <p>Crew: ${data.crew}</p>
                         <p>Passengers: ${data.passengers}</p>                
                     ` 
-                    //planetDetails.innerHTML += nav; 
-                    previous(character);
-                    next(character);                
+                
+                    detailsNavigation(character,transport);            
                 })
                 
                 
@@ -307,210 +286,58 @@ function getVehicles(character){
         else{
             isLoading = false
             planetDetails.innerHTML = `
-                <p>No vehicles owned </p>
+                <p>No ${transport} owned </p>
             `
         }
-        
-        
-    // } 
-
 }
 
-function previous(character){
+function detailsNavigation(character,fetchObject){
+    console.log(character[fetchObject].length);
     let div = document.querySelector(".vehdetails");
     let currentPage = document.querySelector(".paging .current-page").innerText;
-    let nav = getNav(character.vehicles.length,currentPage);
-    /*planetDetails.innerHTML = nav;*/
-    let previous1 = document.querySelector(".previous-1");
-    previous1.addEventListener("click", () =>{
-        currentPage = document.querySelector(".paging .current-page").innerText
-        if(!isLoading){
-            if(currentPage > 1){
-                document.querySelector(".paging .current-page").innerText = --currentPage;
-                isLoading = true;
-                div.innerHTML = `<div class="loader-planets loadplanets"></div>`
-                const request = fetch(character.vehicles[currentPage - 1]);
-                request.then(response => response.json()).then(data =>{
-                    isLoading = false;
-                    div.innerHTML = `
-                        <h3>${data.name}</h3>
-                        <p>Model: ${data.model}</p>
-                        <p>Manufacturer: ${data.manufacturer}</p>
-                        <p>Cost: ${data.cost_in_credits}</p>
-                        <p>Length: ${data.length}</p>
-                        <p>Crew: ${data.crew}</p>
-                        <p>Passengers: ${data.passengers}</p>                
-                    `
-                    //  + getNav(character.vehicles.length, currentPage)
-            });
-                
-                
-            }
-        } 
-    });
+
+    let buttons = document.querySelectorAll(".paging button");
+    for(let button of buttons){
+        button.addEventListener("click", () =>{
+
+            currentPage = document.querySelector(".paging .current-page").innerText;
+            if(!isLoading){
+                /*div.innerHTML = `<div class="loader-planets loadplanets"></div>`*/
+                if(button.getAttribute("class") === "previous-1"){
+                    if(currentPage > 1){
+                        document.querySelector(".paging .current-page").innerText = --currentPage;
+                        isLoading = true; 
+                        div.innerHTML = `<div class="loader-planets loadplanets"></div>`               
+                        fetchDetails(div,character,currentPage,fetchObject);             
+                    }       
+                }
+                else{
+                    if(currentPage < character[fetchObject].length){
+                        document.querySelector(".paging .current-page").innerText = ++currentPage;
+                        isLoading = true; 
+                        div.innerHTML = `<div class="loader-planets loadplanets"></div>`
+                        fetchDetails(div,character,currentPage,fetchObject);
+                    }
+                }
+            } 
+        });
+    }   
 }
 
-function next(character){
-    let div = document.querySelector(".vehdetails");
-    let currentPage = document.querySelector(".paging .current-page").innerText;
-    let nav = getNav(character.vehicles.length,currentPage);
-    /*planetDetails.innerHTML = nav;*/
-    let next1 = document.querySelector(".next-1");
-    
-
-    next1.addEventListener("click", () =>{
-        currentPage = document.querySelector(".paging .current-page").innerText
-        // if(!isLoading){
-            if(currentPage < character.vehicles.length){
-                /*document.querySelector(".loader-characters").classList.remove("removeloader");*/
-                document.querySelector(".paging .current-page").innerText = ++currentPage;
-                div.innerHTML = `<div class="loader-planets loadplanets"></div>`
-                let request = fetch(character.vehicles[currentPage - 1]);
-                
-                request.then(response => response.json())
-                
-                .then(data =>{
-                    // isLoading = false
-                    div.innerHTML = `
-                        <h3>${data.name}</h3>
-                        <p>Model: ${data.model}</p>
-                        <p>Manufacturer: ${data.manufacturer}</p>
-                        <p>Cost: ${data.cost_in_credits}</p>
-                        <p>Length: ${data.length}</p>
-                        <p>Crew: ${data.crew}</p>
-                        <p>Passengers: ${data.passengers}</p>                
-                    ` 
-                    // + getNav(character.vehicles.length, currentPage)
-            });
-        }
-        
-            
-        // }
-
-    });
-
-}
-function getSpaceShips(character){
-    // if(!isLoading){
-        let nav = getNav(character.starships.length, "1");
-        let planetDetails = document.querySelector(".planet-details");
-        planetDetails.innerHTML = ""
-        /*planetDetails.innerHTML = `<div class="loader-planets loadplanets"></div>`;*/
-        /*div1.innerHTML = `<div class="loader-planets loadplanets"></div>`*/
-        planetDetails.innerHTML += nav; 
-        // isLoading = true
-        if(character.starships.length > 0){
-            /*for(vehicle of character.vehicles){
-            
-                
-            }*/
-            let request = fetch(character.starships[0]);
-        
-                let div3 = document.createElement("div");
-                div3.setAttribute("class", "vehdetails");
-                planetDetails.append(div3);
-                div3.innerHTML = `<div class="loader-planets loadplanets"></div>`
-                request.then(response => response.json()).then(data =>{
-                    // isLoading = false;
-                    div3.innerHTML = `
-                        <h3>${data.name}</h3>
-                        <p>Model: ${data.model}</p>
-                        <p>Manufacturer: ${data.manufacturer}</p>
-                        <p>Cost: ${data.cost_in_credits}</p>
-                        <p>Length: ${data.length}</p>
-                        <p>Crew: ${data.crew}</p>
-                        <p>Passengers: ${data.passengers}</p>                
-                    ` 
-                    //planetDetails.innerHTML += nav; 
-                    previous1(character);
-                    next1(character);                
-                })
-                
-                
-        }   
-        else{
-            isLoading = false
-            planetDetails.innerHTML = `
-                <p>No Starship owned </p>
+function fetchDetails(div,character,currentPage,fetchObject){
+    let request = fetch(character[fetchObject][currentPage - 1]);
+    request.then(response => response.json()).then(data =>{
+        isLoading = false;
+        div.innerHTML = `
+            <h3>${data.name}</h3>
+            <p>Model: ${data.model}</p>
+            <p>Manufacturer: ${data.manufacturer}</p>
+            <p>Cost: ${data.cost_in_credits}</p>
+            <p>Length: ${data.length}</p>
+            <p>Crew: ${data.crew}</p>
+            <p>Passengers: ${data.passengers}</p>                
             `
-        }
-        
-        
-    // } 
-
+        });
 }
 
-function previous1(character){
-    let div = document.querySelector(".vehdetails");
-    let currentPage = document.querySelector(".paging .current-page").innerText;
-    let nav = getNav(character.starships.length,currentPage);
-    /*planetDetails.innerHTML = nav;*/
-    let previous1 = document.querySelector(".previous-1");
-    previous1.addEventListener("click", () =>{
-        currentPage = document.querySelector(".paging .current-page").innerText
-        if(!isLoading){
-            if(currentPage > 1){
-                document.querySelector(".paging .current-page").innerText = --currentPage;
-                isLoading = true;
-                div.innerHTML = `<div class="loader-planets loadplanets"></div>`
-                const request = fetch(character.starships[currentPage - 1]);
-                request.then(response => response.json()).then(data =>{
-                    isLoading = false;
-                    div.innerHTML = `
-                        <h3>${data.name}</h3>
-                        <p>Model: ${data.model}</p>
-                        <p>Manufacturer: ${data.manufacturer}</p>
-                        <p>Cost: ${data.cost_in_credits}</p>
-                        <p>Length: ${data.length}</p>
-                        <p>Crew: ${data.crew}</p>
-                        <p>Passengers: ${data.passengers}</p>                
-                    `
-                    //  + getNav(character.vehicles.length, currentPage)
-            });
-                
-                
-            }
-        } 
-    });
-}
 
-function next1(character){
-    let div = document.querySelector(".vehdetails");
-    let currentPage = document.querySelector(".paging .current-page").innerText;
-    let nav = getNav(character.starships.length,currentPage);
-    /*planetDetails.innerHTML = nav;*/
-    let next1 = document.querySelector(".next-1");
-    
-
-    next1.addEventListener("click", () =>{
-        currentPage = document.querySelector(".paging .current-page").innerText
-        // if(!isLoading){
-            if(currentPage < character.starships.length){
-                /*document.querySelector(".loader-characters").classList.remove("removeloader");*/
-                document.querySelector(".paging .current-page").innerText = ++currentPage;
-                div.innerHTML = `<div class="loader-planets loadplanets"></div>`
-                let request = fetch(character.starships[currentPage - 1]);
-                
-                request.then(response => response.json())
-                
-                .then(data =>{
-                    // isLoading = false
-                    div.innerHTML = `
-                        <h3>${data.name}</h3>
-                        <p>Model: ${data.model}</p>
-                        <p>Manufacturer: ${data.manufacturer}</p>
-                        <p>Cost: ${data.cost_in_credits}</p>
-                        <p>Length: ${data.length}</p>
-                        <p>Crew: ${data.crew}</p>
-                        <p>Passengers: ${data.passengers}</p>                
-                    ` 
-                    // + getNav(character.vehicles.length, currentPage)
-            });
-        }
-        
-            
-        // }
-
-    });
-
-}
