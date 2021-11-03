@@ -1,7 +1,3 @@
-// let test = document.querySelector(".test");
-//     test.addEventListener("click", () => {
-//         main();
-// });  
 let isLoading = false;
 
 function main(){
@@ -15,7 +11,7 @@ function getFirstPage(){
     const request = fetch("https://swapi.dev/api/people/?page=1");
     let characters = document.querySelector(".characters")
     request.then(response => response.json()).then(data =>{
-        document.querySelector(".loader-characters").classList.add("removeloader")
+        document.querySelector(".loader-characters").classList.add("removeloader");
         for(let character of data.results){
             let button = document.createElement("button");
             button.innerText = character.name;
@@ -43,14 +39,14 @@ function getPages(){
                 request.then(response => response.json()).then(data =>{
                     isLoading = false;
                     document.querySelector(".loader-characters").classList.add("removeloader")
-                for(let character of data.results){
-                    let button = document.createElement("button");
-                    button.innerText = character.name;
-                    characters.append(button);         
+                    for(let character of data.results){
+                        let button = document.createElement("button");
+                        button.innerText = character.name;
+                        characters.append(button);         
     
-                }
-                displayCharacters(data.results);
-            });
+                    }
+                    displayCharacters(data.results);
+                });
                 
                 
             }
@@ -72,13 +68,13 @@ function getPages(){
                 .then(data =>{
                     isLoading = false
                     document.querySelector(".loader-characters").classList.add("removeloader")
-                for(let character of data.results){
-                    let button = document.createElement("button");
-                    button.innerText = character.name;
-                    characters.append(button);
-                }
-                displayCharacters(data.results);
-            });
+                    for(let character of data.results){
+                        let button = document.createElement("button");
+                        button.innerText = character.name;
+                        characters.append(button);
+                        }
+                    displayCharacters(data.results);
+                });
         }
         
             
@@ -95,7 +91,6 @@ function displayCharacters(characters){
     let speciesInfoButton = document.querySelector(".details-nav button:nth-of-type(2)");
     let vehiclesInfoButton = document.querySelector(".details-nav button:nth-of-type(3)");
     let starshipsInfoButton = document.querySelector(".details-nav button:nth-of-type(4)");
-    // let transportationButtons = document.querySelectorAll("")
     
     for(let button of buttons){
         button.addEventListener("click", () =>{ 
@@ -116,21 +111,6 @@ function displayCharacters(characters){
                         <p>Gender: ${character.gender}</p>                   
                     `
                     getPlanetData(character);
-                    /*planetDetails.innerHTML = `<div class="loader-planets loadplanets"></div>`;
-                    let loadplanets = document.querySelector(".loader-planets");
-                    
-                    let request = fetch(character.homeworld);
-                    request.then(response => response.json()).then(data =>{
-                        planetDetails.innerHTML = `
-                        <h3>${data.name}</h3>
-                        <p>Rotation period: ${data.rotation_period}</p>
-                        <p>Orbital period: ${data.orbital_period}</p>
-                        <p>Diameter: ${data.diameter}</p>
-                        <p>Climate: ${data.climate}</p>
-                        <p>Gravity: ${data.gravity}</p>
-                        <p>Terrain: ${data.terrain}</p>                
-                    `
-                    });*/
                 }
             }
             
@@ -160,7 +140,6 @@ function displayCharacters(characters){
         
         for(let character of characters){
             if(character.name === name){
-                /*getVehicles(character, "vehicles");*/
                 getData(character, "vehicles");
             }
         }
@@ -171,7 +150,6 @@ function displayCharacters(characters){
         
         for(let character of characters){
             if(character.name === name){
-                // getSpaceShips(character,"starships")
                 getData(character, "starships");
             }
         }
@@ -183,19 +161,18 @@ function getPlanetData(character){
     if(!isLoading){
         let planetDetails = document.querySelector(".planet-details");
         planetDetails.innerHTML = `<div class="loader-planets loadplanets"></div>`;
-        console.log(character.homeworld)
         isLoading = true               
         let request = fetch(character.homeworld);
         request.then(response => response.json()).then(data =>{
             isLoading = false
         planetDetails.innerHTML = `
-            <h3>${data.name}</h3>
-            <p>Rotation period: ${data.rotation_period}</p>
-            <p>Orbital period: ${data.orbital_period}</p>
-            <p>Diameter: ${data.diameter}</p>
-            <p>Climate: ${data.climate}</p>
-            <p>Gravity: ${data.gravity}</p>
-            <p>Terrain: ${data.terrain}</p>                
+                <h3>${data.name}</h3>
+                <p>Rotation period: ${data.rotation_period}</p>
+                <p>Orbital period: ${data.orbital_period}</p>
+                <p>Diameter: ${data.diameter}</p>
+                <p>Climate: ${data.climate}</p>
+                <p>Gravity: ${data.gravity}</p>
+                <p>Terrain: ${data.terrain}</p>                
             ` 
         });
     }
@@ -205,7 +182,6 @@ function getSpeciesData(character){
         let planetDetails = document.querySelector(".planet-details");
         planetDetails.innerHTML = `<div class="loader-planets loadplanets"></div>`;
         isLoading = true
-        console.log(character.species)
         if(character.species.length > 0){
             let request = fetch(character.species);
             request.then(response => response.json()).then(data =>{
@@ -245,30 +221,24 @@ function getNav(length,currentPage){
             </nav>
         `
 }
-
-
 function getData(character, transport){
+    if(!isLoading){
     let nav = getNav(character[transport].length, "1");
         let planetDetails = document.querySelector(".planet-details");
         planetDetails.innerHTML = ""
-        /*planetDetails.innerHTML = `<div class="loader-planets loadplanets"></div>`;*/
-        /*div1.innerHTML = `<div class="loader-planets loadplanets"></div>`*/
         planetDetails.innerHTML += nav; 
-        // isLoading = true
+        isLoading = true
         if(character[transport].length > 0){
-            /*for(vehicle of character.vehicles){
-            
-                
-            }*/
+         
             let request = fetch(character[transport][0]);
         
                 let div3 = document.createElement("div");
-                div3.setAttribute("class", "vehdetails");
+                div3.setAttribute("class", "transportation");
                 planetDetails.append(div3);
                 div3.innerHTML = `<div class="loader-planets loadplanets"></div>`
                 request.then(response => response.json()).then(data =>{
-                    // isLoading = false;
-                div3.innerHTML = `
+                    isLoading = false;
+                    div3.innerHTML = `
                         <h3>${data.name}</h3>
                         <p>Model: ${data.model}</p>
                         <p>Manufacturer: ${data.manufacturer}</p>
@@ -280,8 +250,6 @@ function getData(character, transport){
                 
                     detailsNavigation(character,transport);            
                 })
-                
-                
         }   
         else{
             isLoading = false
@@ -289,11 +257,12 @@ function getData(character, transport){
                 <p>No ${transport} owned </p>
             `
         }
+    }
 }
 
 function detailsNavigation(character,fetchObject){
     console.log(character[fetchObject].length);
-    let div = document.querySelector(".vehdetails");
+    let div = document.querySelector(".transportation");
     let currentPage = document.querySelector(".paging .current-page").innerText;
 
     let buttons = document.querySelectorAll(".paging button");
@@ -302,7 +271,6 @@ function detailsNavigation(character,fetchObject){
 
             currentPage = document.querySelector(".paging .current-page").innerText;
             if(!isLoading){
-                /*div.innerHTML = `<div class="loader-planets loadplanets"></div>`*/
                 if(button.getAttribute("class") === "previous-1"){
                     if(currentPage > 1){
                         document.querySelector(".paging .current-page").innerText = --currentPage;
@@ -337,7 +305,7 @@ function fetchDetails(div,character,currentPage,fetchObject){
             <p>Crew: ${data.crew}</p>
             <p>Passengers: ${data.passengers}</p>                
             `
-        });
+    });
 }
 
 
