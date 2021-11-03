@@ -221,7 +221,7 @@ function getSpeciesData(character){
         else{
             isLoading = false;
             planetDetails.innerHTML = `
-                <p>Race Not Found </p>
+                <p>Probably hooman</p>
             `
         }
     }                
