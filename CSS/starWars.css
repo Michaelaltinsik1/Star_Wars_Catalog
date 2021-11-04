@@ -23,21 +23,39 @@ h2 {
     color: #FFD600;
     font-family: 'Ropa Sans', sans-serif;
 }
+.star-wars path{
+    stroke:#FFD600;
+    stroke-width: 2;
+    /*fill: #FFD600;*/
+}
 .page-nav button{
     background-color: transparent;
     border: none;
     cursor: pointer;
 }
-
-.main-heading h1 {
+path{
+    fill: transparent;
+}
+/*.main-heading h1 {
     font-size: 3rem;
     color: #FFD600;
     font-weight: 250;
-}
+}*/
 .main-heading {
-    background: url(../assets/header-background.png) no-repeat;
+    background: url(../assets/header-background.png) no-repeat; 
     background-size: cover;
-    padding: 10rem 7rem;   
+
+    /*padding: 10rem 7rem;   */
+    padding-bottom: 5rem;
+}
+
+.animation-wrapper{
+    position: relative;
+}
+.x-wing{
+    position: absolute;
+    top:-30px;
+    left:-30px
 }
 
 button {

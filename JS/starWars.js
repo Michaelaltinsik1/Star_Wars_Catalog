@@ -1,16 +1,45 @@
 let isLoading = false;
+let pageCache = [];
+let charactersCache = {};
+let planetsCache = {};
+let speciesCache = {};
+let vehiclesCache = {};
+let starshipsCache = {};
 
 function main(){
-    
+        animation();
         getFirstPage();
         getPages();  
 }
-main()
+main();
+function animation(){
+    let path = anime.path(".path path");
+    anime({   
+        targets: ".x-wing",
+        translateX: path("x"),
+        translateY: path("y"),
+        easing: "linear",
+        duration: 12000,
+        rotate: path("angle"),
+        loop: true
+    });
+    anime({
+        targets: ".star-wars path",
+        strokeDashoffset: [anime.setDashoffset,0], 
+        easing:"easeInOutCirc",
+        duration: 3000,
+        direction: "alternate",
+        loop: true
+    });
+    
+}
 
 function getFirstPage(){
     const request = fetch("https://swapi.dev/api/people/?page=1");
     let characters = document.querySelector(".characters")
     request.then(response => response.json()).then(data =>{
+        charactersCache = data.results;
+        pageCache.push(1);
         document.querySelector(".loader-characters").classList.add("removeloader");
         for(let character of data.results){
             let button = document.createElement("button");
@@ -19,6 +48,7 @@ function getFirstPage(){
         }
         displayCharacters(data.results);
     });
+ 
 }
 
 function getPages(){
@@ -43,7 +73,6 @@ function getPages(){
                         let button = document.createElement("button");
                         button.innerText = character.name;
                         characters.append(button);         
-    
                     }
                     displayCharacters(data.results);
                 });
@@ -75,11 +104,8 @@ function getPages(){
                         }
                     displayCharacters(data.results);
                 });
+            }
         }
-        
-            
-        }
-
     });
 }
 function displayCharacters(characters){
