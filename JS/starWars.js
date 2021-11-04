@@ -37,9 +37,13 @@ function animation(){
 function getFirstPage(){
     const request = fetch("https://swapi.dev/api/people/?page=1");
     let characters = document.querySelector(".characters")
+    let currentPage = 1
     request.then(response => response.json()).then(data =>{
-        charactersCache = data.results;
-        pageCache.push(1);
+        /*charactersCache = currentPage: [currentPage],data.results;
+        console.log(charactersCache);*/
+        charactersCache[currentPage] = data.results
+        // charactersCache["charInfo"] = data.results;
+        
         document.querySelector(".loader-characters").classList.add("removeloader");
         for(let character of data.results){
             let button = document.createElement("button");
@@ -52,64 +56,65 @@ function getFirstPage(){
 }
 
 function getPages(){
-    let previousPage = document.querySelector(".previous");
-    let nextPage = document.querySelector(".next");
     let currentPage = Number(document.querySelector(".current-page").innerText);
-    console.log(currentPage);
-   
-    previousPage.addEventListener("click", () => {
-        if(!isLoading){
-            if(currentPage > 1){
-                document.querySelector(".loader-characters").classList.remove("removeloader");
-                document.querySelector(".current-page").innerText = --currentPage;
-                isLoading = true;
-                const request = fetch("https://swapi.dev/api/people/?page="+ currentPage);
-                let characters = document.querySelector(".characters")
-                characters.innerHTML = "";
-                request.then(response => response.json()).then(data =>{
-                    isLoading = false;
-                    document.querySelector(".loader-characters").classList.add("removeloader")
-                    for(let character of data.results){
-                        let button = document.createElement("button");
-                        button.innerText = character.name;
-                        characters.append(button);         
-                    }
-                    displayCharacters(data.results);
-                });
-                
-                
-            }
-        }   
+    let navButtons = document.querySelectorAll(".page-nav button");
     
-    });
-    nextPage.addEventListener("click", () =>{
-        if(!isLoading){
-            if(currentPage < 9){
-                document.querySelector(".loader-characters").classList.remove("removeloader");
-                document.querySelector(".current-page").innerText = ++currentPage;
-                isLoading = true;
-                const request = fetch("https://swapi.dev/api/people/?page="+ currentPage);
-            
-                let characters = document.querySelector(".characters")
-                characters.innerHTML = "";
-                request.then(response => response.json())
-                
-                .then(data =>{
-                    isLoading = false
-                    document.querySelector(".loader-characters").classList.add("removeloader")
-                    for(let character of data.results){
-                        let button = document.createElement("button");
-                        button.innerText = character.name;
-                        characters.append(button);
-                        }
-                    displayCharacters(data.results);
-                });
-            }
+    for(let navButton of navButtons){
+        navButton.addEventListener("click", () => {
+        
+            if(!isLoading){
+                if(navButton.getAttribute("class").includes("previous")){
+                    if(currentPage > 1){
+                        document.querySelector(".current-page").innerText = --currentPage;
+                        updatePage(currentPage);
+                    }
+                }
+                else if(currentPage < 9){
+                        document.querySelector(".current-page").innerText = 
+                        ++currentPage;
+                        updatePage(currentPage);
+                }
+            }         
+        });
+    }
+   
+}
+
+function updatePage(currentPage){
+    let characters = document.querySelector(".characters")
+    if(charactersCache[currentPage]){
+        characters.innerHTML = "";
+        console.log(charactersCache[currentPage]);
+        for(let character of charactersCache[currentPage]){
+            let button = document.createElement("button");
+            button.innerText = character.name;
+            characters.append(button);
         }
-    });
+        displayCharacters(charactersCache[currentPage]);
+    }
+    else{
+        document.querySelector(".loader-characters").classList.remove("removeloader");
+        isLoading = true;
+        const request = fetch("https://swapi.dev/api/people/?page="+ currentPage);
+        characters.innerHTML = "";
+        request.then(response => response.json())
+        .then(data =>{
+            charactersCache[currentPage] = data.results
+            isLoading = false
+            document.querySelector(".loader-characters").classList.add("removeloader")
+            for(let character of data.results){
+                let button = document.createElement("button");
+                button.innerText = character.name;
+                characters.append(button);
+            }
+            console.log(data.results);
+            displayCharacters(data.results);
+        });
+    }
+    
 }
 function displayCharacters(characters){
-
+    console.log(characters);
     let buttons = document.querySelectorAll(".characters button");
     let details = document.querySelector(".person-details");
     let detailsNav = document.querySelector(".details-nav");
