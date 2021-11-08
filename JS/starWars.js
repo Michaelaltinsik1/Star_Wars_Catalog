@@ -115,6 +115,7 @@ function displayCharacters(characters){
     
     for(let button of buttons){
         button.addEventListener("click", () =>{ 
+            removeActive(detailsButtons);
             detailsButtons.item(0).classList.add("active")
             for(let detailsButton of detailsButtons){
                 detailsButton.classList.add("show")
@@ -176,6 +177,7 @@ function displayCharacters(characters){
     }
     
 }
+
 function removeActive(detailsButtons){
     for(button of detailsButtons){
         button.classList.remove("active");
@@ -287,30 +289,13 @@ function getData(character, transport){
     planetDetails.innerHTML += nav; 
 
     if(starshipsCache[character[transport][0]] && transport === "starships"){
-        planetDetails.append(div3);
-        
-            div3.innerHTML = `
-                <h3>${starshipsCache[character[transport][0]].name}</h3>
-                <p>Model: ${starshipsCache[character[transport][0]].model}</p>
-                <p>Manufacturer: ${starshipsCache[character[transport][0]].manufacturer}</p>
-                <p>Cost: ${starshipsCache[character[transport][0]].cost_in_credits}</p>
-                <p>Length: ${starshipsCache[character[transport][0]].length}</p>
-                <p>Crew: ${starshipsCache[character[transport][0]].crew}</p>
-                <p>Passengers: ${starshipsCache[character[transport][0]].passengers}</p>                
-                `                      
+        renderTransportFromCache(starshipsCache, character, transport,div3,planetDetails);
+                       
             detailsNavigation(character,transport);
         }
     else if(vehiclesCache[character[transport][0]] && transport === "vehicles"){
-            planetDetails.append(div3);
-            div3.innerHTML = `
-                <h3>${vehiclesCache[character[transport][0]].name}</h3>
-                <p>Model: ${vehiclesCache[character[transport][0]].model}</p>
-                <p>Manufacturer: ${vehiclesCache[character[transport][0]].manufacturer}</p>
-                <p>Cost: ${vehiclesCache[character[transport][0]].cost_in_credits}</p>
-                <p>Length: ${vehiclesCache[character[transport][0]].length}</p>
-                <p>Crew: ${vehiclesCache[character[transport][0]].crew}</p>
-                <p>Passengers: ${vehiclesCache[character[transport][0]].passengers}</p>                
-                `         
+        renderTransportFromCache(vehiclesCache,character,transport,div3,planetDetails);
+           
                 detailsNavigation(character,transport);
         }
     else{
@@ -354,6 +339,20 @@ function getData(character, transport){
             }
     }
     
+}
+
+function renderTransportFromCache(cache, character, transport,div, planetDetails){
+    planetDetails.append(div);
+    div.innerHTML = `
+        <h3>${cache[character[transport][0]].name}</h3>
+        <p>Model: ${cache[character[transport][0]].model}</p>
+        <p>Manufacturer: ${cache[character[transport][0]].manufacturer}</p>
+        <p>Cost: ${cache[character[transport][0]].cost_in_credits}</p>
+        <p>Length: ${cache[character[transport][0]].length}</p>
+        <p>Crew: ${cache[character[transport][0]].crew}</p>
+        <p>Passengers: ${cache[character[transport][0]].passengers}</p>                
+    `
+
 }
 
 function detailsNavigation(character,fetchObject){
