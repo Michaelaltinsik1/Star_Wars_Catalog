@@ -1,5 +1,4 @@
 let isLoading = false;
-let pageCache = [];
 let charactersCache = {};
 let planetsCache = {};
 let speciesCache = {};
@@ -265,6 +264,65 @@ function getSpeciesData(character){
     }    
 }
 
+
+function getData(character, transport){
+      
+    let planetDetails = document.querySelector(".planet-details");
+    let nav = getNav(character[transport].length, "1");
+    let div3 = document.createElement("div");
+    div3.setAttribute("class", "transportation");
+    if(!isLoading){
+        planetDetails.innerHTML = ""
+        planetDetails.innerHTML += nav; 
+    
+        if(starshipsCache[character[transport][0]] && transport === "starships"){
+            planetDetails.append(div3);           
+            renderTransportFromCache(starshipsCache, character, transport,div3,0);                      
+            detailsNavigation(character,transport);
+        }
+        else if(vehiclesCache[character[transport][0]] && transport === "vehicles"){
+            planetDetails.append(div3);
+            renderTransportFromCache(vehiclesCache,character,transport,div3,0);         
+            detailsNavigation(character,transport);
+        }
+        else{
+            let nav = getNav(character[transport].length, "1");
+            isLoading = true
+            if(character[transport].length > 0){
+                let request = fetch(character[transport][0]);
+                planetDetails.append(div3);
+                div3.innerHTML = `<div class="loader-planets loadplanets"></div>`
+                request.then(response => response.json()).then(data =>{
+                    if(transport === "starships"){                        
+                        starshipsCache[character[transport][0]] = data;
+                    }
+                    else{
+                        vehiclesCache[character[transport][0]] = data
+                    }
+                    isLoading = false;
+                    div3.innerHTML = `
+                    <h3>${data.name}</h3>
+                    <p>Model: ${data.model}</p>
+                    <p>Manufacturer: ${data.manufacturer}</p>
+                    <p>Cost: ${data.cost_in_credits}</p>
+                    <p>Length: ${data.length}</p>
+                    <p>Crew: ${data.crew}</p>
+                    <p>Passengers: ${data.passengers}</p>                
+                    ` 
+                    detailsNavigation(character,transport);            
+                })
+            }   
+            else{
+                isLoading = false
+                planetDetails.innerHTML = `
+                <p>No ${transport} owned </p>
+                `
+            }
+                    
+        }
+    }   
+}
+
 function getNav(length,currentPage){
     return ` <nav class="paging">
                 <button class="previous-1">
@@ -279,83 +337,11 @@ function getNav(length,currentPage){
             </nav>
         `
 }
-function getData(character, transport){
-      
-    let planetDetails = document.querySelector(".planet-details");
-    let nav = getNav(character[transport].length, "1");
-    let div3 = document.createElement("div");
-    div3.setAttribute("class", "transportation");
-    planetDetails.innerHTML = ""
-    planetDetails.innerHTML += nav; 
 
-    if(starshipsCache[character[transport][0]] && transport === "starships"){
-        renderTransportFromCache(starshipsCache, character, transport,div3,planetDetails);
-                       
-            detailsNavigation(character,transport);
-        }
-    else if(vehiclesCache[character[transport][0]] && transport === "vehicles"){
-        renderTransportFromCache(vehiclesCache,character,transport,div3,planetDetails);
-           
-                detailsNavigation(character,transport);
-        }
-    else{
-        if(!isLoading){
-            let nav = getNav(character[transport].length, "1");
-                isLoading = true
-                if(character[transport].length > 0){
-                 
-                    let request = fetch(character[transport][0]);
-                    planetDetails.append(div3);
-                    div3.innerHTML = `<div class="loader-planets loadplanets"></div>`
-                    request.then(response => response.json()).then(data =>{
-                        if(transport === "starships"){                        
-                            starshipsCache[character[transport][0]] = data;
-                        }
-                        else{
-                            vehiclesCache[character[transport][0]] = data
-                        }
-                       
-                        isLoading = false;
-                        div3.innerHTML = `
-                            <h3>${data.name}</h3>
-                            <p>Model: ${data.model}</p>
-                            <p>Manufacturer: ${data.manufacturer}</p>
-                            <p>Cost: ${data.cost_in_credits}</p>
-                            <p>Length: ${data.length}</p>
-                            <p>Crew: ${data.crew}</p>
-                            <p>Passengers: ${data.passengers}</p>                
-                            ` 
-                        
-                            detailsNavigation(character,transport);            
-                        })
-                }   
-                else{
-                    isLoading = false
-                    planetDetails.innerHTML = `
-                        <p>No ${transport} owned </p>
-                    `
-                }
-                
-            }
-    }
-    
-}
 
-function renderTransportFromCache(cache, character, transport,div, planetDetails){
-    planetDetails.append(div);
-    div.innerHTML = `
-        <h3>${cache[character[transport][0]].name}</h3>
-        <p>Model: ${cache[character[transport][0]].model}</p>
-        <p>Manufacturer: ${cache[character[transport][0]].manufacturer}</p>
-        <p>Cost: ${cache[character[transport][0]].cost_in_credits}</p>
-        <p>Length: ${cache[character[transport][0]].length}</p>
-        <p>Crew: ${cache[character[transport][0]].crew}</p>
-        <p>Passengers: ${cache[character[transport][0]].passengers}</p>                
-    `
-
-}
 
 function detailsNavigation(character,fetchObject){
+    
     let div = document.querySelector(".transportation");
     let currentPage = document.querySelector(".paging .current-page").innerText;
     let buttons = document.querySelectorAll(".paging button");
@@ -367,7 +353,8 @@ function detailsNavigation(character,fetchObject){
                     if(currentPage > 1){
                         document.querySelector(".paging .current-page").innerText = --currentPage;
                         isLoading = true; 
-                        div.innerHTML = `<div class="loader-planets loadplanets"></div>`               
+                        div.innerHTML = `<div class="loader-planets loadplanets"></div>`  
+                                                     
                         if(!isCached(div,character,fetchObject,currentPage)){
                             fetchDetails(div,character,fetchObject,currentPage);
                         }            
@@ -388,40 +375,9 @@ function detailsNavigation(character,fetchObject){
         });
     }   
 }
-function isCached(div,character,fetchObject,currentPage){
-    
-    if(character[fetchObject][currentPage - 1] in starshipsCache && fetchObject === "starships"){
-        isLoading = false;
-        console.log(starshipsCache[character[fetchObject][currentPage - 1]].name)
-        div.innerHTML = `
-            <h3>${starshipsCache[character[fetchObject][currentPage - 1]].name}</h3>
-            <p>Model: ${starshipsCache[character[fetchObject][currentPage - 1]].model}</p>
-            <p>Manufacturer: ${starshipsCache[character[fetchObject][currentPage - 1]].manufacturer}</p>
-            <p>Cost: ${starshipsCache[character[fetchObject][currentPage - 1]].cost_in_credits}</p>
-            <p>Length: ${starshipsCache[character[fetchObject][currentPage - 1]].length}</p>
-            <p>Crew: ${starshipsCache[character[fetchObject][currentPage - 1]].crew}</p>
-            <p>Passengers: ${starshipsCache[character[fetchObject][currentPage - 1]].passengers}</p>                
-            ` 
-            return true;
-    }
-    else if(character[fetchObject][currentPage - 1] in vehiclesCache && fetchObject === "vehicles"){
-        isLoading = false;
-        console.log(vehiclesCache[character[fetchObject][currentPage - 1]].name)
-        div.innerHTML = `
-            <h3>${vehiclesCache[character[fetchObject][currentPage - 1]].name}</h3>
-            <p>Model: ${vehiclesCache[character[fetchObject][currentPage - 1]].model}</p>
-            <p>Manufacturer: ${vehiclesCache[character[fetchObject][currentPage - 1]].manufacturer}</p>
-            <p>Cost: ${vehiclesCache[character[fetchObject][currentPage - 1]].cost_in_credits}</p>
-            <p>Length: ${vehiclesCache[character[fetchObject][currentPage - 1]].length}</p>
-            <p>Crew: ${vehiclesCache[character[fetchObject][currentPage - 1]].crew}</p>
-            <p>Passengers: ${vehiclesCache[character[fetchObject][currentPage - 1]].passengers}</p>                
-            ` 
-            return true;
-    }
-    else{
-        return false;
-    }
-}
+
+
+
 function fetchDetails(div,character,fetchObject,currentPage){
     
     let request = fetch(character[fetchObject][currentPage - 1]);
@@ -444,6 +400,36 @@ function fetchDetails(div,character,fetchObject,currentPage){
             <p>Passengers: ${data.passengers}</p>                
             `
     });
+}
+
+function renderTransportFromCache(cache, character, transport,div,index){
+    div.innerHTML = `
+        <h3>${cache[character[transport][index]].name}</h3>
+        <p>Model: ${cache[character[transport][index]].model}</p>
+        <p>Manufacturer: ${cache[character[transport][index]].manufacturer}</p>
+        <p>Cost: ${cache[character[transport][index]].cost_in_credits}</p>
+        <p>Length: ${cache[character[transport][index]].length}</p>
+        <p>Crew: ${cache[character[transport][index]].crew}</p>
+        <p>Passengers: ${cache[character[transport][index]].passengers}</p>                
+    `
+
+}
+
+function isCached(div,character,fetchObject,currentPage){
+    
+    if(character[fetchObject][currentPage - 1] in starshipsCache && fetchObject === "starships"){
+        isLoading = false;
+        renderTransportFromCache(starshipsCache, character, fetchObject,div,currentPage-1);
+        return true;
+    }
+    else if(character[fetchObject][currentPage - 1] in vehiclesCache && fetchObject === "vehicles"){
+        isLoading = false;
+        renderTransportFromCache(vehiclesCache, character, fetchObject,div,currentPage-1);
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 
