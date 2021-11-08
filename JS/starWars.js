@@ -115,8 +115,9 @@ function displayCharacters(characters){
     
     for(let button of buttons){
         button.addEventListener("click", () =>{ 
+            detailsButtons.item(0).classList.add("active")
             for(let detailsButton of detailsButtons){
-                detailsButton.setAttribute("class", "show");
+                detailsButton.classList.add("show")
             }
 
             for(let character of characters){
