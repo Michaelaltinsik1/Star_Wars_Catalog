@@ -111,18 +111,14 @@ function displayCharacters(characters){
     
     let buttons = document.querySelectorAll(".characters button");
     let details = document.querySelector(".person-details");
-    let detailsNav = document.querySelector(".details-nav");
-    let planetInfoButton = document.querySelector(".details-nav button:nth-of-type(1)");
-    let speciesInfoButton = document.querySelector(".details-nav button:nth-of-type(2)");
-    let vehiclesInfoButton = document.querySelector(".details-nav button:nth-of-type(3)");
-    let starshipsInfoButton = document.querySelector(".details-nav button:nth-of-type(4)");
+    let detailsButtons = document.querySelectorAll(".details-nav button");
     
     for(let button of buttons){
         button.addEventListener("click", () =>{ 
-            planetInfoButton.setAttribute("class", "show");
-            speciesInfoButton.setAttribute("class", "show");
-            vehiclesInfoButton.setAttribute("class", "show");
-            starshipsInfoButton.setAttribute("class", "show");
+            for(let detailsButton of detailsButtons){
+                detailsButton.setAttribute("class", "show");
+            }
+
             for(let character of characters){
                 if(character.name === button.innerText){
                     details.innerHTML = `
@@ -141,47 +137,50 @@ function displayCharacters(characters){
             
         });
     }
-    planetInfoButton.addEventListener("click", ()=> {
-        let name = document.querySelector(".person-details h3").innerText;
-        
-        for(let character of characters){
-            if(character.name === name){
-                getPlanetData(character);
-            }
-        }
-    });
-    speciesInfoButton.addEventListener("click",() =>{
-        let name = document.querySelector(".person-details h3").innerText;
-        
-        for(let character of characters){
-            if(character.name === name){
-                getSpeciesData(character);
-            }
-        }
 
-    });
-    vehiclesInfoButton.addEventListener("click",() =>{
-        let name = document.querySelector(".person-details h3").innerText;
+    for(let detailsButton of detailsButtons){
         
-        for(let character of characters){
-            if(character.name === name){
-                getData(character, "vehicles");
+        detailsButton.addEventListener("click", () => {
+            removeActive(detailsButtons);
+            let name = document.querySelector(".person-details h3").innerText;
+            for(let character of characters){
+                if(detailsButton.innerText === "Planet"){
+                    if(character.name === name){
+                        detailsButton.classList.add("active")
+                        getPlanetData(character);
+                    }
+                }
+                else if(detailsButton.innerText === "Species"){
+                    if(character.name === name){
+                        detailsButton.classList.add("active")
+                        getSpeciesData(character);
+                    }
+                }
+                else if(detailsButton.innerText === "Vehicles"){
+                    if(character.name === name){
+                        detailsButton.classList.add("active")
+                        getData(character, "vehicles");
+                    }
+                }
+                else{
+                    if(character.name === name){
+                        detailsButton.classList.add("active")
+                        getData(character, "starships");
+                    }
+                }
             }
-        }
 
-    });
-    starshipsInfoButton.addEventListener("click",() =>{
-        let name = document.querySelector(".person-details h3").innerText;
+        })
         
-        for(let character of characters){
-            if(character.name === name){
-                getData(character, "starships");
-            }
-        }
-
-    });
+    }
+    
 }
+function removeActive(detailsButtons){
+    for(button of detailsButtons){
+        button.classList.remove("active");
+    }
 
+}
 
 function getPlanetData(character){
     let planetDetails = document.querySelector(".planet-details");

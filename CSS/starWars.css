@@ -174,9 +174,10 @@ button {
 
 .details-nav button:hover{
     background-color: #c0c2c0;
+    color: black;
 }
 
-.details-nav button:focus{
+button.active{
     background-color:#7e7d7d ;
     color: #FFD600;
 }
