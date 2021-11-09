@@ -9,6 +9,7 @@ function main(){
         animation();
         getFirstPage();
         getPages();  
+        
 }
 main();
 function animation(){
@@ -44,7 +45,7 @@ function getFirstPage(){
             button.innerText = character.name;
             characters.append(button);
         }
-        displayCharacters(data.results);
+        renderCharacterInfo(data.results);
     });
  
 }
@@ -83,7 +84,7 @@ function updatePage(currentPage){
             button.innerText = character.name;
             characters.append(button);
         }
-        displayCharacters(charactersCache[currentPage]);
+        renderCharacterInfo(charactersCache[currentPage]);
     }
     else{
         document.querySelector(".loader-characters").classList.remove("removeloader");
@@ -101,12 +102,12 @@ function updatePage(currentPage){
                 characters.append(button);
             }
            
-            displayCharacters(data.results);
+            renderCharacterInfo(data.results);
         });
     }
     
 }
-function displayCharacters(characters){
+function renderCharacterInfo(characters){
     
     let buttons = document.querySelectorAll(".characters button");
     let details = document.querySelector(".person-details");
@@ -132,7 +133,7 @@ function displayCharacters(characters){
                         <p>Birth year: ${character.birth_year}</p>
                         <p>Gender: ${character.gender}</p>                   
                     `
-                    getPlanetData(character);
+                    renderPlanetData(character);
                 }
             }
             
@@ -148,25 +149,25 @@ function displayCharacters(characters){
                 if(detailsButton.innerText === "Planet"){
                     if(character.name === name){
                         detailsButton.classList.add("active")
-                        getPlanetData(character);
+                        renderPlanetData(character);
                     }
                 }
                 else if(detailsButton.innerText === "Species"){
                     if(character.name === name){
                         detailsButton.classList.add("active")
-                        getSpeciesData(character);
+                        renderSpeciesData(character);
                     }
                 }
                 else if(detailsButton.innerText === "Vehicles"){
                     if(character.name === name){
                         detailsButton.classList.add("active")
-                        getData(character, "vehicles");
+                        renderTransportFirstPage(character, "vehicles");
                     }
                 }
                 else{
                     if(character.name === name){
                         detailsButton.classList.add("active")
-                        getData(character, "starships");
+                        renderTransportFirstPage(character, "starships");
                     }
                 }
             }
@@ -184,11 +185,11 @@ function removeActive(detailsButtons){
 
 }
 
-function getPlanetData(character){
-    let planetDetails = document.querySelector(".planet-details");
+function renderPlanetData(character){
+    let detailsContainer = document.querySelector(".planet-details");
     if(planetsCache[character.homeworld]){
 
-        planetDetails.innerHTML = `
+        detailsContainer.innerHTML = `
                 <h3>${planetsCache[character.homeworld].name}</h3>
                 <p>Rotation period: ${planetsCache[character.homeworld].rotation_period}</p>
                 <p>Orbital period: ${planetsCache[character.homeworld].orbital_period}</p>
@@ -200,14 +201,14 @@ function getPlanetData(character){
     }
     else{
         if(!isLoading){
-            planetDetails.innerHTML = `<div class="loader-planets loadplanets"></div>`;
+            detailsContainer.innerHTML = `<div class="loader-planets loadplanets"></div>`;
             isLoading = true               
             let request = fetch(character.homeworld);
             request.then(response => response.json()).then(data =>{
                 planetsCache[character.homeworld] = data
                 
                 isLoading = false
-            planetDetails.innerHTML = `
+            detailsContainer.innerHTML = `
                     <h3>${data.name}</h3>
                     <p>Rotation period: ${data.rotation_period}</p>
                     <p>Orbital period: ${data.orbital_period}</p>
@@ -221,10 +222,10 @@ function getPlanetData(character){
     }
     
 }
-function getSpeciesData(character){
-    let planetDetails = document.querySelector(".planet-details");
+function renderSpeciesData(character){
+    let detailsContainer = document.querySelector(".planet-details");
     if(speciesCache[character.species]){
-            planetDetails.innerHTML = `
+            detailsContainer.innerHTML = `
                     <h3>${speciesCache[character.species].name}</h3>
                     <p>Classification: ${speciesCache[character.species].classification}</p>
                     <p>Designation: ${speciesCache[character.species].designation}</p>
@@ -236,14 +237,14 @@ function getSpeciesData(character){
     }
     else{
         if(!isLoading){
-            planetDetails.innerHTML = `<div class="loader-planets loadplanets"></div>`;
+            detailsContainer.innerHTML = `<div class="loader-planets loadplanets"></div>`;
             isLoading = true
             if(character.species.length > 0){
                 let request = fetch(character.species);
                 request.then(response => response.json()).then(data =>{
                     speciesCache[character.species] = data
                     isLoading = false
-                    planetDetails.innerHTML = `
+                    detailsContainer.innerHTML = `
                         <h3>${data.name}</h3>
                         <p>Classification: ${data.classification}</p>
                         <p>Designation: ${data.designation}</p>
@@ -256,7 +257,7 @@ function getSpeciesData(character){
             }
             else{
                 isLoading = false;
-                planetDetails.innerHTML = `
+                detailsContainer.innerHTML = `
                     <p>Probably hooman</p>
                 `
             }
@@ -265,33 +266,33 @@ function getSpeciesData(character){
 }
 
 
-function getData(character, transport){
+function renderTransportFirstPage(character, transport){
       
-    let planetDetails = document.querySelector(".planet-details");
-    let nav = getNav(character[transport].length, "1");
-    let div3 = document.createElement("div");
-    div3.setAttribute("class", "transportation");
+    let detailsContainer = document.querySelector(".planet-details");
+    let nav = renderNav(character[transport].length, "1");
+    let transportDataContainer = document.createElement("div");
+    transportDataContainer.setAttribute("class", "transportation");
     if(!isLoading){
-        planetDetails.innerHTML = ""
-        planetDetails.innerHTML += nav; 
+        detailsContainer.innerHTML = ""
+        detailsContainer.innerHTML += nav; 
     
         if(starshipsCache[character[transport][0]] && transport === "starships"){
-            planetDetails.append(div3);           
-            renderTransportFromCache(starshipsCache, character, transport,div3,0);                      
-            detailsNavigation(character,transport);
+            detailsContainer.append(transportDataContainer);           
+            renderTransportFromCache(starshipsCache, character, transport,transportDataContainer,0);                      
+            transportNavigation(character,transport);
         }
         else if(vehiclesCache[character[transport][0]] && transport === "vehicles"){
-            planetDetails.append(div3);
-            renderTransportFromCache(vehiclesCache,character,transport,div3,0);         
-            detailsNavigation(character,transport);
+            detailsContainer.append(transportDataContainer);
+            renderTransportFromCache(vehiclesCache,character,transport,transportDataContainer,0);         
+            transportNavigation(character,transport);
         }
         else{
-            let nav = getNav(character[transport].length, "1");
+            let nav = renderNav(character[transport].length, "1");
             isLoading = true
             if(character[transport].length > 0){
                 let request = fetch(character[transport][0]);
-                planetDetails.append(div3);
-                div3.innerHTML = `<div class="loader-planets loadplanets"></div>`
+                detailsContainer.append(transportDataContainer);
+                transportDataContainer.innerHTML = `<div class="loader-planets loadplanets"></div>`
                 request.then(response => response.json()).then(data =>{
                     if(transport === "starships"){                        
                         starshipsCache[character[transport][0]] = data;
@@ -300,7 +301,7 @@ function getData(character, transport){
                         vehiclesCache[character[transport][0]] = data
                     }
                     isLoading = false;
-                    div3.innerHTML = `
+                    transportDataContainer.innerHTML = `
                     <h3>${data.name}</h3>
                     <p>Model: ${data.model}</p>
                     <p>Manufacturer: ${data.manufacturer}</p>
@@ -309,12 +310,12 @@ function getData(character, transport){
                     <p>Crew: ${data.crew}</p>
                     <p>Passengers: ${data.passengers}</p>                
                     ` 
-                    detailsNavigation(character,transport);            
+                    transportNavigation(character,transport);            
                 })
             }   
             else{
                 isLoading = false
-                planetDetails.innerHTML = `
+                detailsContainer.innerHTML = `
                 <p>No ${transport} owned </p>
                 `
             }
@@ -323,7 +324,7 @@ function getData(character, transport){
     }   
 }
 
-function getNav(length,currentPage){
+function renderNav(length,currentPage){
     return ` <nav class="paging">
                 <button class="previous-1">
                     <img src="images/chevron_left_black_24dp.svg" alt="left-arrow">
@@ -340,7 +341,7 @@ function getNav(length,currentPage){
 
 
 
-function detailsNavigation(character,fetchObject){
+function transportNavigation(character,fetchObject){
     
     let div = document.querySelector(".transportation");
     let currentPage = document.querySelector(".paging .current-page").innerText;
