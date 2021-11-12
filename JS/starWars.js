@@ -12,6 +12,11 @@ function main(){
         
 }
 main();
+
+/****
+ * Handles the title and X-wing animation
+ * 
+ ****/
 function animation(){
     let path = anime.path(".path path");
     anime({   
@@ -33,6 +38,11 @@ function animation(){
     });    
 }
 
+/****
+ * Renders character first page
+ * 
+ ****/
+
 function getFirstPage(){
     const request = fetch("https://swapi.dev/api/people/?page=1");
     let characters = document.querySelector(".characters")
@@ -49,6 +59,11 @@ function getFirstPage(){
     });
  
 }
+
+/****
+ * Handles navigation between character pages
+ * 
+ ****/
 
 function getPages(){
     let currentPage = Number(document.querySelector(".current-page").innerText);
@@ -73,6 +88,11 @@ function getPages(){
         });
     }   
 }
+
+/****
+ * Render character names on character page
+ * 
+ ****/
 
 function updatePage(currentPage){
     let characters = document.querySelector(".characters")
@@ -107,6 +127,11 @@ function updatePage(currentPage){
     }
     
 }
+
+/****
+ * Renders character info in details box
+ * 
+ ****/
 function renderCharacterInfo(characters){
     
     let buttons = document.querySelectorAll(".characters button");
@@ -125,8 +150,8 @@ function renderCharacterInfo(characters){
                 if(character.name === button.innerText){
                     details.innerHTML = `
                         <h3>${character.name}</h3>
-                        <p>Height: ${character.height}</p>
-                        <p>Mass: ${character.mass}</p>
+                        <p>Height: ${character.height} cm</p>
+                        <p>Mass: ${character.mass} kg</p>
                         <p>Hair color: ${character.hair_color}</p>
                         <p>Skin color: ${character.skin_color}</p>
                         <p>Eye color: ${character.eye_color}</p>
@@ -177,6 +202,10 @@ function renderCharacterInfo(characters){
     }
     
 }
+/****
+ * removes active class from info buttons
+ * 
+ ****/
 
 function removeActive(detailsButtons){
     for(button of detailsButtons){
@@ -185,8 +214,13 @@ function removeActive(detailsButtons){
 
 }
 
+/****
+ * renders planet info from selected character
+ * 
+ ****/
+
 function renderPlanetData(character){
-    let detailsContainer = document.querySelector(".planet-details");
+    let detailsContainer = document.querySelector(".character-information");
     if(planetsCache[character.homeworld]){
 
         detailsContainer.innerHTML = `
@@ -201,7 +235,7 @@ function renderPlanetData(character){
     }
     else{
         if(!isLoading){
-            detailsContainer.innerHTML = `<div class="loader-planets loadplanets"></div>`;
+            detailsContainer.innerHTML = `<div class="loader-info loadinfo"></div>`;
             isLoading = true               
             let request = fetch(character.homeworld);
             request.then(response => response.json()).then(data =>{
@@ -222,8 +256,13 @@ function renderPlanetData(character){
     }
     
 }
+
+/****
+ * renders species info from selected character
+ * 
+ ****/
 function renderSpeciesData(character){
-    let detailsContainer = document.querySelector(".planet-details");
+    let detailsContainer = document.querySelector(".character-information");
     if(speciesCache[character.species]){
             detailsContainer.innerHTML = `
                     <h3>${speciesCache[character.species].name}</h3>
@@ -237,7 +276,7 @@ function renderSpeciesData(character){
     }
     else{
         if(!isLoading){
-            detailsContainer.innerHTML = `<div class="loader-planets loadplanets"></div>`;
+            detailsContainer.innerHTML = `<div class="loader-info loadinfo"></div>`;
             isLoading = true
             if(character.species.length > 0){
                 let request = fetch(character.species);
@@ -265,10 +304,13 @@ function renderSpeciesData(character){
     }    
 }
 
-
+/****
+ * renders first page of vehicles or starships from selected character
+ * 
+ ****/
 function renderTransportFirstPage(character, transport){
       
-    let detailsContainer = document.querySelector(".planet-details");
+    let detailsContainer = document.querySelector(".character-information");
     let nav = renderNav(character[transport].length, "1");
     let transportDataContainer = document.createElement("div");
     transportDataContainer.setAttribute("class", "transportation");
@@ -292,7 +334,7 @@ function renderTransportFirstPage(character, transport){
             if(character[transport].length > 0){
                 let request = fetch(character[transport][0]);
                 detailsContainer.append(transportDataContainer);
-                transportDataContainer.innerHTML = `<div class="loader-planets loadplanets"></div>`
+                transportDataContainer.innerHTML = `<div class="loader-info loadinfo"></div>`
                 request.then(response => response.json()).then(data =>{
                     if(transport === "starships"){                        
                         starshipsCache[character[transport][0]] = data;
@@ -323,6 +365,10 @@ function renderTransportFirstPage(character, transport){
         }
     }   
 }
+/****
+ * renders navigation on vehicles and starship tabs
+ * 
+ ****/
 
 function renderNav(length,currentPage){
     return ` <nav class="paging">
@@ -338,7 +384,10 @@ function renderNav(length,currentPage){
             </nav>
         `
 }
-
+/****
+ * Handles navigation between pages for vehicles and starships
+ * 
+ ****/
 
 
 function transportNavigation(character,fetchObject){
@@ -354,7 +403,7 @@ function transportNavigation(character,fetchObject){
                     if(currentPage > 1){
                         document.querySelector(".paging .current-page").innerText = --currentPage;
                         isLoading = true; 
-                        div.innerHTML = `<div class="loader-planets loadplanets"></div>`  
+                        div.innerHTML = `<div class="loader-info loadinfo"></div>`  
                                                      
                         if(!isCached(div,character,fetchObject,currentPage)){
                             fetchDetails(div,character,fetchObject,currentPage);
@@ -365,7 +414,7 @@ function transportNavigation(character,fetchObject){
                     if(currentPage < character[fetchObject].length){
                         document.querySelector(".paging .current-page").innerText = ++currentPage;
                         isLoading = true; 
-                        div.innerHTML = `<div class="loader-planets loadplanets"></div>`
+                        div.innerHTML = `<div class="loader-info loadinfo"></div>`
                         if(!isCached(div,character, fetchObject,currentPage)){
                             fetchDetails(div,character,fetchObject,currentPage);
                         }
@@ -376,7 +425,10 @@ function transportNavigation(character,fetchObject){
         });
     }   
 }
-
+/****
+ * Fetches and renders vehicle and starships info
+ * 
+ ****/
 
 
 function fetchDetails(div,character,fetchObject,currentPage){
@@ -402,6 +454,10 @@ function fetchDetails(div,character,fetchObject,currentPage){
             `
     });
 }
+/****
+ * renders vehicle or starship information from cache
+ * 
+ ****/
 
 function renderTransportFromCache(cache, character, transport,div,index){
     div.innerHTML = `
@@ -415,6 +471,10 @@ function renderTransportFromCache(cache, character, transport,div,index){
     `
 
 }
+/****
+ * checks if selected vehicle or starship key is cached
+ * 
+ ****/
 
 function isCached(div,character,fetchObject,currentPage){
     
