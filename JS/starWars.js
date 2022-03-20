@@ -6,7 +6,7 @@ let vehiclesCache = {};
 let starshipsCache = {};
 
 function main(){
-        animation();
+        //animation();
         getFirstPage();
         getPages();  
         
@@ -17,7 +17,7 @@ main();
  * Handles the title and X-wing animation
  * 
  ****/
-function animation(){
+/*function animation(){
     let path = anime.path(".path path");
     anime({   
         targets: ".x-wing",
